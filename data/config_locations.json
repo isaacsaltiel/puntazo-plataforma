@@ -1,0 +1,31 @@
+{
+  "locaciones": [
+    {
+      "id": "ClubEjemplo",
+      "nombre": "Club Ejemplo",
+      "cancha": [
+        {
+          "id": "Cancha1",
+          "nombre": "Cancha 1",
+          "lados": ["LadoA", "LadoB"]
+        },
+        {
+          "id": "Cancha2",
+          "nombre": "Cancha 2",
+          "lados": ["LadoX", "LadoY"]
+        }
+      ]
+    },
+    {
+      "id": "ClubOtro",
+      "nombre": "Club Otro",
+      "cancha": [
+        {
+          "id": "Principal",
+          "nombre": "Cancha Principal",
+          "lados": ["LadoN", "LadoS"]
+        }
+      ]
+    }
+  ]
+}

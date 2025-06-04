@@ -1,0 +1,80 @@
+/* assets/estilo.css */
+
+/* Reset básico de márgenes y fuentes */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f9f9f9;
+  color: #333;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  background: #004d99;
+  color: white;
+  padding: 10px 20px;
+}
+
+.logo {
+  height: 50px;
+  margin-right: 15px;
+}
+
+.empresa-nombre {
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.navbar {
+  margin-left: auto;
+}
+
+.navbar a {
+  color: white;
+  margin-left: 20px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+
+.site-content {
+  padding: 20px;
+}
+
+h2 {
+  color: #004d99;
+  margin-bottom: 10px;
+}
+
+/* Footer básico */
+.site-footer {
+  background: #222;
+  color: #ccc;
+  padding: 20px;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.site-footer a {
+  color: #ffcc00;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
+
+.footer-copy {
+  font-size: 0.8rem;
+  margin-top: 15px;
+}
