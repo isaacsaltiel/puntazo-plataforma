@@ -26,6 +26,18 @@
           "lados": ["LadoN", "LadoS"]
         }
       ]
+    }    ,
+    {
+      "id": "Escorpion",
+      "nombre": "Escorpion",
+      "cancha": [
+        {
+          "id": "Cancha4",
+          "nombre": "Cancha 4",
+          "lados": ["LadoN"]
+        }
+      ]
     }
+
   ]
 }
