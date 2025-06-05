@@ -1,44 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
-  <!-- ===== Inicio de header ===== -->
-  <!-- Incluimos directamente el contenido de templates/header.html -->
+  <!-- Incluimos el header -->
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puntazo Videovigilancia</title>
-    <link rel="stylesheet" href="assets/estilo.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Puntazo</title>
+    <link rel="stylesheet" href="assets/estilo.css" />
+    <!-- Google Fonts Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
   </head>
   <body>
     <header class="site-header">
-      <img src="assets/logo.png" alt="Logo Puntazo" class="logo">
-      <h1 class="empresa-nombre">Puntazo Videovigilancia</h1>
+      <a href="index.html">
+        <img src="assets/logo.png" alt="Logo Puntazo" class="logo" />
+      </a>
+      <h1 class="empresa-nombre">Puntazo</h1>
       <nav class="navbar">
         <a href="index.html">Inicio</a>
         <a href="index.html#locaciones">Locaciones</a>
         <a href="#contacto">Contáctanos</a>
       </nav>
     </header>
+
     <main class="site-content">
-      <!-- Bloque de bienvenida -->
-      <section id="bienvenida">
-        <h2>Bienvenido a Puntazo Videovigilancia</h2>
-        <p>Escanea el QR de tu cancha para ver el video en vivo.</p>
+      <section id="bienvenida" class="fade-in">
+        <h2>Bienvenido a Puntazo</h2>
+        <p>Escanea el QR de tu cancha para ver los replays.</p>
       </section>
 
-      <!-- Listado de locaciones -->
-      <section id="locaciones">
-        <h2>Locaciones Disponibles</h2>
-        <ul id="locaciones-lista">
-          <!-- Se llenará dinámicamente por script.js -->
-        </ul>
+      <section id="locaciones" class="fade-in" style="margin-top: 30px;">
+        <h2>Locaciones</h2>
+        <ul id="locaciones-lista"></ul>
       </section>
-    <!-- ===== Fin de main ===== -->
-
-    <!-- Incluimos directamente el contenido de templates/footer.html -->
     </main>
+
+    <!-- Incluimos el footer -->
     <footer class="site-footer" id="contacto">
       <div class="footer-info">
-        <p>¿Te interesa que estemos en tu club? <a href="mailto:contacto@puntazo.com">Contáctanos</a></p>
+        <p>¿Te interesa que estemos en tu club? <a href="mailto:contacto@puntazo.com">Escríbenos</a></p>
         <p>Recuerda que los videos se borran pasadas 8 horas.</p>
       </div>
       <div class="footer-redes">
@@ -46,7 +47,7 @@
         <a href="https://instagram.com/puntazo" target="_blank">Instagram</a>
         <a href="mailto:contacto@puntazo.com">Email</a>
       </div>
-      <p class="footer-copy">© 2025 Puntazo Videovigilancia</p>
+      <p class="footer-copy">© 2025 Puntazo</p>
     </footer>
 
     <script src="assets/script.js"></script>
