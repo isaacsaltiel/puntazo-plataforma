@@ -24,84 +24,83 @@ async function fetchConfig() {
 
 // 4) Mostrar videos en lado.html
 async function populateVideos() {
-  const params = getQueryParams();
-  const locId  = params.loc;
-  const canId  = params.can;
-  const ladoId = params.lado;
+  // 1) Obtener params de URL
+  const { loc, can, lado } = getQueryParams();
 
-  // Cargamos la configuración completa
-  const { locaciones } = await fetchConfig();
-  const loc  = locaciones.find(l => l.id === locId);
-  if (!loc) return console.error("Locación no encontrada");
-  const can  = loc.cancha.find(c => c.id === canId);
-  if (!can) return console.error("Cancha no encontrada");
-  const lado = can.lados.find(x => x.id === ladoId);
-  if (!lado) return console.error("Lado no encontrado");
+  // 2) Cargar configuración
+  const { locaciones } = await fetch("data/config_locations.json").then(r => r.json());
+  const locObj = locaciones.find(l => l.id === loc);
+  if (!locObj) return console.error("Locación no encontrada");
+  const canObj = locObj.cancha.find(c => c.id === can);
+  if (!canObj) return console.error("Cancha no encontrada");
+  const ladoObj = canObj.lados.find(x => x.id === lado);
+  if (!ladoObj) return console.error("Lado no encontrado");
 
-  // Construir URL al JSON de Dropbox
+  // 3) Montar URL raw al JSON en Dropbox
   const jsonUrl = 
-    `https://dl.dropboxusercontent.com/s/${lado.dropbox_folder_id}/videos_recientes.json` +
-    `?rlkey=${lado.rlkey}&st=${lado.st}&dl=1`;
+    `https://dl.dropboxusercontent.com/s/${ladoObj.dropbox_folder_id}/videos_recientes.json` +
+    `?rlkey=${ladoObj.rlkey}&st=${ladoObj.st}&dl=1`;
 
   try {
-    const res = await fetch(jsonUrl);
-    if (!res.ok) throw new Error("No se pudo cargar JSON");
-    const data = await res.json();
-
-    // Actualizar título de página
-    document.getElementById("nombre-club").textContent        = loc.nombre.toUpperCase();
-    document.getElementById("nombre-cancha-lado").textContent = 
-      `${can.nombre} – ${lado.nombre}`;
-
-    // Ordenar videos del más nuevo al más antiguo
-    data.videos.sort((a, b) => {
-      const t1 = a.nombre.match(/\d+/g).join("");
-      const t2 = b.nombre.match(/\d+/g).join("");
-      return parseInt(t2) - parseInt(t1);
+    // 4) Fetch y parse
+    const data = await fetch(jsonUrl).then(r => {
+      if (!r.ok) throw new Error("JSON no encontrado");
+      return r.json();
     });
 
-    // Vaciar contenedor y crear tarjetas
+    // 5) Actualizar encabezados
+    document.getElementById("nombre-club").textContent        = locObj.nombre.toUpperCase();
+    document.getElementById("nombre-cancha-lado").textContent = `${canObj.nombre} – ${ladoObj.nombre}`;
+
+    // 6) Ordenar y renderizar tarjetas
     const container = document.getElementById("videos-container");
     container.innerHTML = "";
 
-    data.videos.forEach(entry => {
-      // Convertir share URL a raw
-      let rawUrl = entry.url
-        .replace(/^https:\/\/www\.dropbox\.com/, "https://dl.dropboxusercontent.com")
-        .replace(/([\?&])dl=0$/, "$1dl=1");
+    data.videos
+      .sort((a, b) => {
+        const t1 = a.nombre.match(/\d+/g).join("");
+        const t2 = b.nombre.match(/\d+/g).join("");
+        return parseInt(t2) - parseInt(t1);
+      })
+      .forEach(entry => {
+        // Convertir share → raw
+        let rawUrl = entry.url
+          .replace(/^https:\/\/www\.dropbox\.com/, "https://dl.dropboxusercontent.com")
+          .replace(/([\?&])dl=0$/, "$1dl=1");
 
-      // Extraer hora: video_final_YYYYMMDD_HHMMSS.mp4 → HH:MM:SS
-      const m = entry.nombre.match(/_(\d{2})(\d{2})(\d{2})\.mp4$/);
-      const displayTime = m ? `${m[1]}:${m[2]}:${m[3]}` : entry.nombre;
+        // Extraer hora
+        const m = entry.nombre.match(/_(\d{2})(\d{2})(\d{2})\.mp4$/);
+        const displayTime = m ? `${m[1]}:${m[2]}:${m[3]}` : entry.nombre;
 
-      // Construir tarjeta
-      const card = document.createElement("div");
-      card.className = "video-card";
+        // Crear tarjeta
+        const card = document.createElement("div");
+        card.className = "video-card";
 
-      const title = document.createElement("div");
-      title.className = "video-title";
-      title.textContent = displayTime;
-      card.appendChild(title);
+        const title = document.createElement("div");
+        title.className = "video-title";
+        title.textContent = displayTime;
+        card.appendChild(title);
 
-      const video = document.createElement("video");
-      video.controls = true;
-      video.src = rawUrl;
-      card.appendChild(video);
+        const video = document.createElement("video");
+        video.controls = true;
+        video.src = rawUrl;
+        card.appendChild(video);
 
-      const btn = document.createElement("button");
-      btn.className = "btn-download";
-      btn.textContent = "Descargar";
-      btn.onclick = () => window.open(rawUrl, "_blank");
-      card.appendChild(btn);
+        const btn = document.createElement("button");
+        btn.className = "btn-download";
+        btn.textContent = "Descargar";
+        btn.onclick = () => window.open(rawUrl, "_blank");
+        card.appendChild(btn);
 
-      container.appendChild(card);
-    });
+        container.appendChild(card);
+      });
   } catch (err) {
     console.error(err);
     document.getElementById("videos-container").innerHTML =
       "<p class='no-videos'>No hay videos disponibles.</p>";
   }
 }
+
 
 // 5) Arrancar
 document.addEventListener("DOMContentLoaded", () => {
