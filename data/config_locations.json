@@ -7,26 +7,43 @@
         {
           "id": "Cancha1",
           "nombre": "Cancha 1",
--          "lados": ["LadoA","LadoB"]
-+          "lados": [
-+            {
-+              "id": "LadoA",
-+              "nombre": "Lado A",
-+              "dropbox_folder_id": "nmadc9v7o4yjjgajbd3gq",
-+              "rlkey": "h1g4ddj7n0gb9wil3lriihely",
-+              "st": "0ys8b5ha"
-+            },
-+            {
-+              "id": "LadoB",
-+              "nombre": "Lado B",
-+              "dropbox_folder_id": "sib89idhs4r7vwk9lynek",
-+              "rlkey": "a4egau5glzjlr8c6u5nmmldpi",
-+              "st": "a2v39gcp"
-+            }
-+          ]
+          "lados": [
+            {
+              "id": "LadoA",
+              "nombre": "Lado A",
+              "dropbox_folder_id": "sib89idhs4r7vwk9lynek",
+              "rlkey": "a4egau5glzjlr8c6u5nmmldpi",
+              "st": "f5toh0n0"
+            },
+            {
+              "id": "LadoB",
+              "nombre": "Lado B",
+              "dropbox_folder_id": "nmadc9v7o4yjjgajbd3gq",
+              "rlkey": "h1g4ddj7n0gb9wil3lriihely",
+              "st": "0ys8b5ha"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ClubNuevo",
+      "nombre": "Club Nuevo",
+      "cancha": [
+        {
+          "id": "CanchaA",
+          "nombre": "Cancha A",
+          "lados": [
+            {
+              "id": "LadoB",
+              "nombre": "Lado B",
+              "dropbox_folder_id": "nmadc9v7o4yjjgajbd3gq",
+              "rlkey": "h1g4ddj7n0gb9wil3lriihely",
+              "st": "0ys8b5ha"
+            }
+          ]
         }
       ]
     }
-    /* resto de locaciones… */
   ]
 }
