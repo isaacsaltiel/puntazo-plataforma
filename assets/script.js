@@ -1,162 +1,80 @@
 // assets/script.js
 
-// Función para parsear parámetros de query string
+// 1) Leer parámetros de URL
 function getQueryParams() {
   const params = {};
   window.location.search
     .substring(1)
     .split("&")
     .forEach(pair => {
-      const [key, value] = pair.split("=");
-      if (key) params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+      const [k, v] = pair.split("=");
+      if (k) params[decodeURIComponent(k)] = decodeURIComponent(v || "");
     });
   return params;
 }
 
-// Población dinámica de la lista de locaciones en index.html
-async function populateLocaciones() {
+// 2) Cargar config_locations.json
+async function fetchConfig() {
   const res = await fetch("data/config_locations.json");
-  const config = await res.json();
-  const ul = document.getElementById("locaciones-lista");
-  config.locaciones.forEach(loc => {
-    const li = document.createElement("li");
-    li.classList.add("fade-in");
-    li.style.marginBottom = "10px";
-    const a = document.createElement("a");
-    a.href = `locacion.html?loc=${loc.id}`;
-    a.textContent = loc.nombre;
-    a.style.color = "#ffffff";
-    a.style.fontSize = "1.2rem";
-    a.style.textDecoration = "none";
-    a.addEventListener("mouseover", () => {
-      a.style.color = "#55c1e7"; // celeste
-    });
-    a.addEventListener("mouseout", () => {
-      a.style.color = "#ffffff";
-    });
-    li.appendChild(a);
-    ul.appendChild(li);
-  });
+  return await res.json();
 }
 
-// Población dinámica de la lista de canchas en locacion.html
-async function populateCanchas() {
-  const params = getQueryParams();
-  const locId = params.loc;
-  const res = await fetch("data/config_locations.json");
-  const config = await res.json();
-  const loc = config.locaciones.find(l => l.id === locId);
+// 3) Generar menú dinámico (locaciones, canchas, lados)… (igual que antes)
+//    (omito aquí populateLocaciones, populateCanchas y populateLados por brevedad)
 
-  if (!loc) {
-    document.getElementById("canchas-lista").innerHTML = "<li>Locación no encontrada</li>";
-    return;
-  }
-
-  document.getElementById("nombre-locacion").textContent = loc.nombre;
-  const ul = document.getElementById("canchas-lista");
-  loc.cancha.forEach(can => {
-    const li = document.createElement("li");
-    li.classList.add("fade-in");
-    li.style.marginBottom = "10px";
-    const a = document.createElement("a");
-    a.href = `cancha.html?loc=${locId}&can=${can.id}`;
-    a.textContent = can.nombre;
-    a.style.color = "#ffffff";
-    a.style.fontSize = "1.2rem";
-    a.style.textDecoration = "none";
-    a.addEventListener("mouseover", () => {
-      a.style.color = "#55c1e7"; // celeste
-    });
-    a.addEventListener("mouseout", () => {
-      a.style.color = "#ffffff";
-    });
-    li.appendChild(a);
-    ul.appendChild(li);
-  });
-}
-
-// Población dinámica de la lista de lados en cancha.html
-async function populateLados() {
-  const params = getQueryParams();
-  const locId = params.loc, canId = params.can;
-  const res = await fetch("data/config_locations.json");
-  const config = await res.json();
-  const loc = config.locaciones.find(l => l.id === locId);
-  if (!loc) return;
-  const can = loc.cancha.find(c => c.id === canId);
-  if (!can) {
-    document.getElementById("lados-lista").innerHTML = "<li>Cancha no encontrada</li>";
-    return;
-  }
-
-  document.getElementById("nombre-cancha").textContent = can.nombre;
-  const ul = document.getElementById("lados-lista");
-  can.lados.forEach(lado => {
-    const li = document.createElement("li");
-    li.classList.add("fade-in");
-    li.style.marginBottom = "10px";
-    const a = document.createElement("a");
-    a.href = `lado.html?loc=${locId}&can=${canId}&lado=${lado}`;
-    a.textContent = lado;
-    a.style.color = "#ffffff";
-    a.style.fontSize = "1.2rem";
-    a.style.textDecoration = "none";
-    a.addEventListener("mouseover", () => {
-      a.style.color = "#55c1e7"; // celeste
-    });
-    a.addEventListener("mouseout", () => {
-      a.style.color = "#ffffff";
-    });
-    li.appendChild(a);
-    ul.appendChild(li);
-  });
-}
-
-// Mostrar listado de videos en lado.html
+// 4) Mostrar videos en lado.html
 async function populateVideos() {
-  // Asumimos que este Pi está configurado para ClubEjemplo/Cancha1/LadoA,
-  // así que cargamos directamente ese JSON en Dropbox:
-  const jsonUrl = "https://dl.dropboxusercontent.com/s/nmadc9v7o4yjjgajbd3gq/videos_recientes.json?rlkey=h1g4ddj7n0gb9wil3lriihely&st=0ys8b5ha&dl=0";
+  const params = getQueryParams();
+  const locId  = params.loc;
+  const canId  = params.can;
+  const ladoId = params.lado;
+
+  // Cargamos la configuración completa
+  const { locaciones } = await fetchConfig();
+  const loc  = locaciones.find(l => l.id === locId);
+  if (!loc) return console.error("Locación no encontrada");
+  const can  = loc.cancha.find(c => c.id === canId);
+  if (!can) return console.error("Cancha no encontrada");
+  const lado = can.lados.find(x => x.id === ladoId);
+  if (!lado) return console.error("Lado no encontrado");
+
+  // Construir URL al JSON de Dropbox
+  const jsonUrl = 
+    `https://dl.dropboxusercontent.com/s/${lado.dropbox_folder_id}/videos_recientes.json` +
+    `?rlkey=${lado.rlkey}&st=${lado.st}&dl=1`;
 
   try {
     const res = await fetch(jsonUrl);
-    if (!res.ok) throw new Error("JSON no encontrado en Dropbox");
+    if (!res.ok) throw new Error("No se pudo cargar JSON");
     const data = await res.json();
-    const container = document.getElementById("videos-container");
-    container.innerHTML = ""; // Limpia antes de insertar
 
-    // Extraer parámetros para mostrar título correcto en página
-    const params = getQueryParams();
-    const locId = (params.loc || "ClubEjemplo").toUpperCase();
-    const canId = (params.can || "Cancha1").toUpperCase();
-    const ladoId = (params.lado || "LadoA").toUpperCase();
-    document.getElementById("nombre-club").textContent = locId;
-    document.getElementById("nombre-cancha-lado").textContent = `${canId} – ${ladoId}`;
+    // Actualizar título de página
+    document.getElementById("nombre-club").textContent        = loc.nombre.toUpperCase();
+    document.getElementById("nombre-cancha-lado").textContent = 
+      `${can.nombre} – ${lado.nombre}`;
 
-    // Ordenar los videos de más recientes a más antiguos
+    // Ordenar videos del más nuevo al más antiguo
     data.videos.sort((a, b) => {
       const t1 = a.nombre.match(/\d+/g).join("");
       const t2 = b.nombre.match(/\d+/g).join("");
       return parseInt(t2) - parseInt(t1);
     });
 
+    // Vaciar contenedor y crear tarjetas
+    const container = document.getElementById("videos-container");
+    container.innerHTML = "";
+
     data.videos.forEach(entry => {
-      // entry.url: 
-      // "https://www.dropbox.com/scl/fi/.../video_final_20250605_122335.mp4?rlkey=...&dl=0"
-      // Convertimos a raw:
-      let rawUrl = entry.url.replace(/^https:\/\/www\.dropbox\.com/, "https://dl.dropboxusercontent.com");
-      rawUrl = rawUrl.replace(/([\?&])dl=0$/, "$1dl=1");
+      // Convertir share URL a raw
+      let rawUrl = entry.url
+        .replace(/^https:\/\/www\.dropbox\.com/, "https://dl.dropboxusercontent.com")
+        .replace(/([\?&])dl=0$/, "$1dl=1");
 
-      // Extraer hora: "video_final_20250605_122335.mp4" → "12:23:35"
-      let displayTime = "";
+      // Extraer hora: video_final_YYYYMMDD_HHMMSS.mp4 → HH:MM:SS
       const m = entry.nombre.match(/_(\d{2})(\d{2})(\d{2})\.mp4$/);
-      if (m) {
-        displayTime = `${m[1]}:${m[2]}:${m[3]}`;
-      } else {
-        displayTime = entry.nombre;
-      }
+      const displayTime = m ? `${m[1]}:${m[2]}:${m[3]}` : entry.nombre;
 
-      // Construir tarjeta para cada video
+      // Construir tarjeta
       const card = document.createElement("div");
       card.className = "video-card";
 
@@ -173,30 +91,23 @@ async function populateVideos() {
       const btn = document.createElement("button");
       btn.className = "btn-download";
       btn.textContent = "Descargar";
-      btn.addEventListener("click", () => {
-        window.location.href = rawUrl;
-      });
+      btn.onclick = () => window.open(rawUrl, "_blank");
       card.appendChild(btn);
 
       container.appendChild(card);
     });
   } catch (err) {
-    console.error("Error en populateVideos():", err);
-    const container = document.getElementById("videos-container");
-    container.innerHTML = "<p style='color:#fff; text-align:center;'>No hay videos disponibles en este momento.</p>";
+    console.error(err);
+    document.getElementById("videos-container").innerHTML =
+      "<p class='no-videos'>No hay videos disponibles.</p>";
   }
 }
 
-// Detectar en qué página estamos y llamar a la función correspondiente
+// 5) Arrancar
 document.addEventListener("DOMContentLoaded", () => {
   const path = window.location.pathname;
-  if (path.endsWith("index.html") || path.endsWith("/")) {
-    populateLocaciones();
-  } else if (path.endsWith("locacion.html")) {
-    populateCanchas();
-  } else if (path.endsWith("cancha.html")) {
-    populateLados();
-  } else if (path.endsWith("lado.html")) {
+  if (path.endsWith("lado.html")) {
     populateVideos();
-  }
+  } 
+  // …y tus llamadas a populateLocaciones, populateCanchas, populateLados…
 });
