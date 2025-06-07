@@ -37,7 +37,19 @@
           "lados": ["LadoN"]
         }
       ]
-    }
+    }  ,
+  {
+    "id": "ClubNuevo",
+    "nombre": "Club Nuevo",
+    "cancha": [
+      {
+        "id": "CanchaA",
+        "nombre": "Cancha A",
+        "lados": ["LadoB"]
+      }
+    ]
+  }
+
 
   ]
 }
