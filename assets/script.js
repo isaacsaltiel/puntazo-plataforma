@@ -116,7 +116,7 @@ async function populateLados() {
 async function populateVideos() {
   // Asumimos que este Pi está configurado para ClubEjemplo/Cancha1/LadoA,
   // así que cargamos directamente ese JSON en Dropbox:
-  const jsonUrl = "https://dl.dropboxusercontent.com/s/sib89idhs4r7vwk9lynek/videos_recientes.json?rlkey=a4egau5glzjlr8c6u5nmmldpi&st=a2v39gcp&dl=1";
+  const jsonUrl = "https://dl.dropboxusercontent.com/s/fisfvkplqc64t44r9qkxm/videos_recientes.json?rlkey=wcrqpcqtymhhd4qn8dakvk8qt&st=ol09vuxh&dl=0";
 
   try {
     const res = await fetch(jsonUrl);
